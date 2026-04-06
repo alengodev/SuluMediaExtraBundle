@@ -102,9 +102,6 @@ class ImageFormatsGenerateCommand extends Command
 
     private function appendFormatsToXml(string $targetPath, array $newFormats): void
     {
-        $content = \file_get_contents($targetPath);
-        $insertPosition = \strrpos($content, '</formats>');
-
         $newXml = '';
         foreach ($newFormats as $format) {
             [$x, $y] = $this->parseDimensions($format);
@@ -112,9 +109,22 @@ class ImageFormatsGenerateCommand extends Command
             $newXml .= $this->generateFormatXml($format . '@2x', $x * 2, $y * 2);
         }
 
+        if (!\file_exists($targetPath)) {
+            \file_put_contents($targetPath, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<formats>\n" . $newXml . "</formats>\n");
+
+            return;
+        }
+
+        $content = \file_get_contents($targetPath);
+        $insertPosition = \is_string($content) ? \strrpos($content, '</formats>') : false;
+
+        if (false === $insertPosition) {
+            throw new \RuntimeException(\sprintf('No closing </formats> tag found in "%s".', $targetPath));
+        }
+
         \file_put_contents(
             $targetPath,
-            \substr($content, 0, $insertPosition) . $newXml . "\n</formats>\n",
+            \substr($content, 0, $insertPosition) . $newXml . "</formats>\n",
         );
     }
 
