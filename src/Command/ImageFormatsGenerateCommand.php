@@ -87,7 +87,7 @@ class ImageFormatsGenerateCommand extends Command
             return [];
         }
 
-        $xml = \simplexml_load_string(\file_get_contents($targetPath));
+        $xml = \simplexml_load_file($targetPath);
         if (false === $xml) {
             return [];
         }

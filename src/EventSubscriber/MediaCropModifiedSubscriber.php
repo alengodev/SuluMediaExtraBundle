@@ -72,10 +72,10 @@ class MediaCropModifiedSubscriber implements EventSubscriberInterface
             $duplicate->setFileVersion($fileVersion);
         }
 
-        $duplicate->setCropX((int) $source->getCropX());
-        $duplicate->setCropY((int) $source->getCropY());
-        $duplicate->setCropWidth((int) $source->getCropWidth());
-        $duplicate->setCropHeight((int) $source->getCropHeight());
+        $duplicate->setCropX($source->getCropX());
+        $duplicate->setCropY($source->getCropY());
+        $duplicate->setCropWidth($source->getCropWidth());
+        $duplicate->setCropHeight($source->getCropHeight());
 
         $this->entityManager->persist($duplicate);
         $this->entityManager->flush();
