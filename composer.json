@@ -1,0 +1,29 @@
+{
+    "name": "alengo/sulu-media-extra-bundle",
+    "description": "Media utilities for Sulu CMS — @2x crop sync, format generation, media rename command",
+    "type": "symfony-bundle",
+    "homepage": "https://github.com/alengodev/SuluMediaExtraBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexander Huber-De Monte"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "sulu/sulu": "~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Alengo\\SuluMediaExtraBundle\\": "src/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": true
+        }
+    }
+}
