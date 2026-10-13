@@ -39,6 +39,7 @@ class AlengoMediaExtraTestKernel extends Kernel
             $container->loadFromExtension('framework', [
                 'test' => true,
                 'secret' => 'test',
+                'secrets' => false,
                 'http_method_override' => false,
                 'handle_all_throwables' => true,
                 'php_errors' => ['log' => true],

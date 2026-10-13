@@ -30,13 +30,24 @@ class ServiceWiringTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
+        // debug=false so Symfony does not register its debug error/exception
+        // handlers, which PHPUnit 11 would otherwise flag as risky.
+        self::bootKernel(['debug' => false]);
 
         $container = self::getContainer();
         $container->set(EntityManagerInterface::class, $this->createMock(EntityManagerInterface::class));
         $container->set(MediaRepositoryInterface::class, $this->createMock(MediaRepositoryInterface::class));
         $container->set(StorageInterface::class, $this->createMock(StorageInterface::class));
         $container->set(PathCleanupInterface::class, $this->createMock(PathCleanupInterface::class));
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        // The booted kernel leaves an exception handler registered; PHPUnit flags
+        // it as "risky" if it outlives the test, so restore it here.
+        \restore_exception_handler();
     }
 
     /**
