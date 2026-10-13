@@ -1,0 +1,60 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    tests:
+        name: PHP ${{ matrix.php }} / ${{ matrix.deps }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    # Lowest supported dependencies (Sulu 3.0, Symfony 6.4 LTS)
+                    - php: '8.2'
+                      deps: lowest
+                    # Highest stable dependencies
+                    - php: '8.2'
+                      deps: highest
+                    - php: '8.3'
+                      deps: highest
+                    - php: '8.4'
+                      deps: highest
+                    # Dev lane: current Sulu 3.1-dev branch on the latest PHP
+                    - php: '8.4'
+                      deps: dev
+                      stability: dev
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  coverage: none
+                  tools: composer:v2
+
+            - name: Set minimum stability (dev lane)
+              if: matrix.stability == 'dev'
+              run: |
+                  composer config minimum-stability dev
+                  composer config prefer-stable true
+                  composer require --no-update "sulu/sulu:3.1.x-dev"
+
+            - name: Install dependencies (lowest)
+              if: matrix.deps == 'lowest'
+              run: composer update --prefer-lowest --prefer-stable --no-interaction --no-progress
+
+            - name: Install dependencies (highest / dev)
+              if: matrix.deps != 'lowest'
+              run: composer update --no-interaction --no-progress
+
+            - name: Run test suite
+              run: vendor/bin/phpunit
