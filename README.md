@@ -1,5 +1,7 @@
 # SuluMediaExtraBundle
 
+[![CI](https://github.com/alengodev/SuluMediaExtraBundle/actions/workflows/ci.yaml/badge.svg)](https://github.com/alengodev/SuluMediaExtraBundle/actions/workflows/ci.yaml)
+
 Media utilities for [Sulu CMS](https://sulu.io/) 3.x — `@2x` crop synchronization, image format generation, and media rename command.
 
 ## Features
@@ -12,8 +14,13 @@ Media utilities for [Sulu CMS](https://sulu.io/) 3.x — `@2x` crop synchronizat
 ## Requirements
 
 - PHP 8.2+
-- Sulu CMS ~3.0
-- Symfony 7.x
+- Sulu CMS ~3.0 (tested against 3.0 and 3.1)
+- Symfony 6.4 LTS, 7.x, or 8.x
+
+> **Compatibility:** Verified against Sulu 3.1 and Symfony 8.1. The `~3.0` Sulu
+> constraint already covers 3.1, so it is pulled automatically once a stable
+> 3.1 is released. See [Testing against dev versions](#testing-against-dev-versions)
+> to try the current `3.1.x-dev` branch today.
 
 ## Installation
 
@@ -28,6 +35,45 @@ Alengo\SuluMediaExtraBundle\AlengoMediaExtraBundle::class => ['all' => true],
 ```
 
 No further configuration required — all services are auto-registered.
+
+## Testing against dev versions
+
+To try the bundle against the current `sulu/sulu:3.1.x-dev` branch and Symfony 8.1
+**without** adding dev stability to the bundle's own `composer.json`, resolve it in a
+throwaway project that references your local working copy via a path repository:
+
+```bash
+# from a scratch directory (not the bundle repo)
+composer init --no-interaction --name=local/dev-test
+composer config minimum-stability dev
+composer config prefer-stable true
+composer config repositories.bundle path /path/to/alengoMediaExtraBundle
+
+composer require \
+  "alengo/sulu-media-extra-bundle:*@dev" \
+  "sulu/sulu:3.1.x-dev" \
+  "symfony/console:~8.1.0" \
+  "symfony/yaml:~8.1.0"
+```
+
+This installs the dev dependencies and symlinks the bundle, so you can verify
+resolution and that all referenced Sulu/Symfony classes autoload against the dev
+stack. The bundle's published constraints stay clean.
+
+> Only `3.1.x-dev` exists today — there is no stable Sulu 3.1 release yet, so a real
+> project still installs the latest stable 3.0.x unless it opts into dev stability.
+
+## Development & tests
+
+```bash
+composer install
+composer test        # or: vendor/bin/phpunit
+```
+
+The suite contains a service-wiring smoke test (boots the bundle in a real
+Symfony kernel and asserts every service compiles) and a functional test of the
+image-format generation. CI runs the suite on PHP 8.2–8.4 across `--prefer-lowest`
+(Sulu 3.0 / Symfony 6.4 LTS), highest stable, and a `sulu/sulu:3.1.x-dev` lane.
 
 ## @2x Crop Sync
 
