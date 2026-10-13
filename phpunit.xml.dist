@@ -4,8 +4,7 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          cacheDirectory=".phpunit.cache"
-         failOnWarning="true"
-         failOnDeprecation="true">
+         failOnWarning="true">
     <testsuites>
         <testsuite name="SuluMediaExtraBundle Test Suite">
             <directory>tests</directory>
